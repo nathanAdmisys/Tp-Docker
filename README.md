@@ -75,17 +75,43 @@
 
 *  a. Qu’apporte le fichier docker-compose par rapport aux commandes docker run ? Pourquoi est-il intéressant ? (cf. ce qui a été présenté pendant le cours) 
  
+ Le fichier docker-compose.yml permet de définir une configuration pour plusieurs conteneurs Docker. Cela permet de définir comment les conteneurs doivent interagir et de les démarrer ensemble en une seule commande, au lieu d'avoir à exécuter plusieurs commandes docker run séparément. Cela peut être particulièrement utile lorsque vous avez un projet qui implique plusieurs conteneurs qui doivent être lancés et configurés de manière coordonnée.
+
+Voici quelques avantages à utiliser docker-compose :
+
+Simplicité : définir tous les paramètres de vos conteneurs dans un seul fichier, ce qui peut être plus facile à gérer et à comprendre que de devoir exécuter de nombreuses commandes docker run individuelles.
+
+Reproductibilité : le fichier docker-compose.yml peut être versionné et partagé avec d'autres, ce qui permet de garantir que tout le monde utilise la même configuration de conteneurs.
+
+Efficacité : avec docker-compose, vous pouvez facilement démarrer, arrêter et réinitialiser l'ensemble de vos conteneurs d'un seul coup, au lieu de devoir gérer chaque conteneur individuellement.
  
   * b. Quel moyen permet de configurer (premier utilisateur, première base de données, mot de passe root, …) facilement le conteneur mysql au lancement ?
+   
+  >Utiliser un script de configuration, avec l'option '--init-file' de la commande 'docker run'
   
-
+  >Utiliser des variables d'environnements, définies dans le fichier 'docker-compose.yml'; pour configurer le conteneur MySQL au démarrage, on peut définir la variable MYSQL_ROOT_PASSWORD pour définir le mot de passe root de MySQL.
+  
+  >Utiliser un fichier de configuration : créer un fichier de configuration MySQL (my.cnf) et le monter dans le conteneur en utilisant l'option -v de la commande docker run. Cela permet de configurer de nombreux paramètres MySQL au démarrage.
+  
+  
 **9. Observation de l’isolation réseau entre 3 conteneurs** 
 
 * a. A l’aide de docker-compose et de l’image praqma/network-multitool disponible sur le Docker Hub créer 3 services (web, app et db) et 2 réseaux (frontend et backend). Les services web et db ne devront pas pouvoir effectuer de ping de l’un vers l’autre 
 
-
+![](https://i.imgur.com/tqLLFWM.png)
     
 * b. Quelles lignes du résultat de la commande docker inspect justifient ce comportement ? 
 
+![](https://i.imgur.com/0u8NmO3.png)
+
 * c. Dans quelle situation réelles (avec quelles images) pourrait-on avoir cette configuration réseau ? Dans quel but ?
   
+>une application web qui utilise un serveur de base de données pour stocker les données. 
+Dans ce cas, on peut créer un réseau backend pour le serveur web et le serveur de base de données, et un réseau frontend pour le serveur web seul.
+
+>une application distribuée qui utilise plusieurs conteneurs pour exécuter différents microservice.
+On peut créer un réseau frontend pour les microservices accessibles depuis l'Internet et un réseau backend pour les microservices internes.
+
+>une application qui utilise un conteneur pour effectuer des analyses de données en arrière-plan. 
+conteneur accessible depuis l'Internet uniquement pour effectuer des mises à jour, mais que les données qu'il utilise soient protégées. 
+création d'un réseau frontend pour le conteneur de mises à jour et un réseau backend pour les conteneurs qui stockent les données.
